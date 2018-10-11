@@ -1,0 +1,6 @@
+# Copy nothing
+*
+
+# Except
+!Dockerfile
+!supervisord.conf
