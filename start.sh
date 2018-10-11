@@ -15,8 +15,8 @@ TENSORBOARD_PORT="${3:+-p $3:6006}"
 PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
 
 # Update image
-IMAGE=deeplearning:dev
-# TODO: docker pull "$IMAGE"
+IMAGE=vslutov/deeplearning
+docker pull "$IMAGE"
 
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
