@@ -12,9 +12,13 @@ Includes:
 - Pytorch + Ignite
 - Jupyter, numpy, scipy, pandas, skimage, matplotlib, tqdm
 
-## Start
+## How to use
+
+Download file [start.sh](start.sh) and make it executable.
+
+Run command:
+
 ```shell
 ./start.sh data_folder [jupyter_port [tensorboard_port]]
 ```
-
-Mount `data_folder` and runs jupyter and tensorboard.
+, where `data_folder` is folder that should be mounted as data (with code and data).
