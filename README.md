@@ -11,7 +11,7 @@ Includes:
 
 ## Start
 ```shell
-  ./start.sh data_folder [jupyter_port [tensorboard_port]]
+./start.sh data_folder [jupyter_port [tensorboard_port]]
 ```
 
-Runs jupyter on `port` and mount `folder`.
+Mount `data_folder` and runs jupyter and tensorboard.

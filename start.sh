@@ -5,7 +5,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-DATA_FOLDER=$1
+DATA_FOLDER=$(readlink -f "$1")
 
 # If ports set, we shoult send it to docker
 JUPYTER_PORT="${2:+-p $2:8888}"
@@ -16,7 +16,7 @@ PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
 
 # Update image
 IMAGE=vslutov/deeplearning
-docker pull "$IMAGE"
+# docker pull "$IMAGE"
 
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
@@ -30,8 +30,8 @@ if [ "$DOCKER_CODE" -ne "0" ]; then
 fi
 
 # Get service ports
-JUPYTER_URL=$(docker port "$CONTAINER_ID" | grep -e "^6006" | grep -o -e "\\S\\+$")
-TENSORBOARD_URL=$(docker port "$CONTAINER_ID" | grep -e "^8888" | grep -o -e "\\S\\+$")
+JUPYTER_URL=$(docker port "$CONTAINER_ID" | grep -e "^8888" | grep -o -e "\\S\\+$")
+TENSORBOARD_URL=$(docker port "$CONTAINER_ID" | grep -e "^6006" | grep -o -e "\\S\\+$")
 
 # Show log
 echo "Container ID: $CONTAINER_ID"
