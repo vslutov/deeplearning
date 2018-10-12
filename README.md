@@ -6,19 +6,20 @@
 Includes:
 
 - GPU support
-- Service manager
 - Python 3.6
-- Tensorflow + tensorboard + Keras
-- Pytorch + Ignite
+- Jupyter + Tensorboard
+- Pytorch + Ignite + TensorboardX
+- Tensorflow + Keras
 - Jupyter, numpy, scipy, pandas, skimage, matplotlib, tqdm
+- Supervisord
 
 ## How to use
 
-Download file [start.sh](start.sh) and make it executable.
+Download file [deeplearning.sh](deeplearning.sh) and make it executable.
 
 Run command:
 
 ```shell
-./start.sh data_folder [jupyter_port [tensorboard_port]]
+./deeplearning.sh data_folder [jupyter_port [tensorboard_port]]
 ```
 , where `data_folder` is folder that should be mounted as data (with code and data).
