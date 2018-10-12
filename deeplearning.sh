@@ -92,7 +92,6 @@ if [ -n "${JUPYTER_PORT}" ] ; then
 fi
 
 [ -n "${JUPYTER_PORT}" ]
-echo $? "${JUPYTER_PORT}"
 
 if [ -n "${TENSORBOARD_PORT}" ] ; then
   JUPYTER_PORT="-p $TENSORBOARD_PORT:6006"
@@ -103,12 +102,8 @@ if [ -z "${PASSWORD}" ] ; then
   PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
 fi
 
-echo password: "$PASSWORD"
-
-exit 0
-
 # Update image
-IMAGE=vslutov/deeplearning
+IMAGE=vslutov/deeplearning:latest
 docker pull "$IMAGE"
 
 # Run docker
