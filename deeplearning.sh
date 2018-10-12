@@ -88,13 +88,12 @@ DATA_FOLDER=$(readlink -f "$DATA_FOLDER")
 # If ports set, we shoult send it to docker
 if [ -n "${JUPYTER_PORT}" ] ; then
   JUPYTER_PORT="-p $JUPYTER_PORT:8888"
-  echo jupyter port: "$JUPYTER_PORT"
 fi
 
 [ -n "${JUPYTER_PORT}" ]
 
 if [ -n "${TENSORBOARD_PORT}" ] ; then
-  JUPYTER_PORT="-p $TENSORBOARD_PORT:6006"
+  TENSORBOARD_PORT="-p $TENSORBOARD_PORT:6006"
 fi
 
 if [ -z "${PASSWORD}" ] ; then
