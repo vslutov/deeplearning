@@ -26,10 +26,10 @@ RUN apt-get update && \
     apt-get clean && \
 \
     curl -sL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash && \
-    echo 'export PATH="/root/.pyenv/bin:$PATH"' >~/.bashrc && \
-    echo 'eval "$(pyenv init -)"' >>~/.bashrc && \
-    echo 'eval "$(pyenv virtualenv-init -)"' >>~/.bashrc && \
-    source ~/.bashrc && \
+    echo 'export PATH="/root/.pyenv/bin:$PATH"' >/root/.bashrc && \
+    echo 'eval "$(pyenv init -)"' >>/root/.bashrc && \
+    echo 'eval "$(pyenv virtualenv-init -)"' >>/root/.bashrc && \
+    source /root/.bashrc && \
     pyenv install 3.6.6 && pyenv virtualenv 3.6.6 deep && pyenv global deep && \
 \
     pip install --upgrade pip && \
@@ -37,8 +37,13 @@ RUN apt-get update && \
                 Pillow tqdm Keras tensorflow-gpu tensorboard tensorboardX \
                 requests scikit-image scikit-learn scikit-video && \
 \
-    mkdir -p $PROJECT_ROOT ~/.jupyter && \
-    ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1
+    mkdir -p $PROJECT_ROOT && \
+    ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1 && \
+\
+    find /root \( -type d -exec chmod 0777 {} \; \) , \
+               \( -type f -executable -exec chmod 0777 {} \; \) , \
+               \( -type f \! -executable -exec chmod 0666 {} \; \) && \
+    chmod a+w /home
 
 WORKDIR $PROJECT_ROOT
 COPY supervisord.conf /etc/supervisord.conf
