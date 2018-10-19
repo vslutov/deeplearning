@@ -33,8 +33,9 @@ RUN apt-get update && \
     pyenv install 3.6.6 && pyenv virtualenv 3.6.6 deep && pyenv global deep && \
 \
     pip install --upgrade pip && \
-    pip install torch torchvision pytorch-ignite jupyter scikit-image scikit-learn matplotlib \
-                numpy scipy pandas Pillow tqdm Keras tensorflow-gpu tensorboard tensorboardX && \
+    pip install torch torchvision pytorch-ignite jupyter matplotlib numpy scipy pandas \
+                Pillow tqdm Keras tensorflow-gpu tensorboard tensorboardX \
+                requests scikit-image scikit-learn scikit-video && \
 \
     mkdir -p $PROJECT_ROOT ~/.jupyter && \
     ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1
