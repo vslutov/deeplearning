@@ -57,6 +57,8 @@ SHELL ["/usr/bin/zsh", "-c"]
 RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     git clone git://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
+    git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized && \
+    vim -c 'PluginInstall' -c 'qa!' && \
     curl -sL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | zsh && \
     source /home/$NB_USER/.zshrc && \
     pyenv install 3.6.6 && pyenv virtualenv 3.6.6 deep && pyenv global deep && \

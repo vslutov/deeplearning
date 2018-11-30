@@ -60,4 +60,3 @@ Script [deeplearning.sh](deeplearning.sh):
 1. If you set the jupyter listening port, then the host port forwards to the jupyter notebook, else a random port sets.
 1. The tensorboard runs with folder `data_folder/runs` as input. The listening port sets as like as the jupyter listening port.
 1. Print out the container id, jupyter and tensorboard host ports and the jupyter password.
-1. If you prefer run vim in container, run `:PluginInstall` command to install usefull plugins.
