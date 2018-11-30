@@ -74,16 +74,19 @@ EOF
 }
 
 argparse "$@" <<EOF || exit 1
-parser.add_argument('data_folder')
+parser.add_argument('work_folder')
 parser.add_argument('-j', '--jupyter-port', default=None, type=int,
                     help='The jupyter listen port [default: some free port]')
 parser.add_argument('-t', '--tensorboard-port', default=None, type=int,
                     help='The jupyter listen port [default: some free port]')
 parser.add_argument('-p', '--password', default=None, type=str,
                     help='The jupyter password [default: random string]')
+parser.add_argument('-s', '--start-shell', default=False, action='store_true',
+                    help='Run shell into container [default: false]')
 EOF
 
-DATA_FOLDER=$(readlink -f "$DATA_FOLDER")
+WORK_FOLDER=$(readlink -f "$WORK_FOLDER")
+mkdir -p "$WORK_FOLDER"
 
 # If ports set, we shoult send it to docker
 if [ -n "${JUPYTER_PORT}" ] ; then
@@ -108,7 +111,7 @@ docker pull "$IMAGE"
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
                -P $JUPYTER_PORT $TENSORBOARD_PORT \
-               "--volume=$DATA_FOLDER:/lab" "$IMAGE")
+               "--volume=$WORK_FOLDER:/home/user/work" "$IMAGE")
 DOCKER_CODE="$?"
 
 if [ "$DOCKER_CODE" -ne "0" ]; then
@@ -121,7 +124,13 @@ JUPYTER_URL=$(docker port "$CONTAINER_ID" | grep -e "^8888" | grep -o -e "\\S\\+
 TENSORBOARD_URL=$(docker port "$CONTAINER_ID" | grep -e "^6006" | grep -o -e "\\S\\+$")
 
 # Show log
-echo "Container ID: $CONTAINER_ID"
 echo "Jupyter: http://$JUPYTER_URL"
-echo "Tensorboard port: http://$TENSORBOARD_URL"
+echo "Tensorboard: http://$TENSORBOARD_URL"
 echo "Password: $PASSWORD"
+
+if [[ $START_SHELL ]]; then
+  echo "Now shell is running"
+  docker exec -it $CONTAINER_ID /usr/bin/zsh
+else
+  echo "Run shell into container: 'docker exec -it $CONTAINER_ID /usr/bin/zsh'"
+fi
