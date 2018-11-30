@@ -38,12 +38,7 @@ RUN apt-get update && \
                 requests scikit-image scikit-learn scikit-video && \
 \
     mkdir -p $PROJECT_ROOT && \
-    ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1 && \
-\
-    find /root \( -type d -exec chmod 0777 {} \; \) , \
-               \( -type f -executable -exec chmod 0777 {} \; \) , \
-               \( -type f \! -executable -exec chmod 0666 {} \; \) && \
-    chmod a+w /home
+    ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1
 
 WORKDIR $PROJECT_ROOT
 COPY supervisord.conf /etc/supervisord.conf

@@ -110,7 +110,7 @@ CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
                -P $JUPYTER_PORT $TENSORBOARD_PORT \
                "--volume=$DATA_FOLDER:/lab" "$IMAGE")
 DOCKER_CODE="$?"
-#               -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro -u$(id -u):$(id -g) \
+
 if [ "$DOCKER_CODE" -ne "0" ]; then
   # Something goes wrong
   exit "$DOCKER_CODE"
