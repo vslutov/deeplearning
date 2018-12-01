@@ -45,7 +45,7 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git gitfast colored-man zsh-syntax-highlighting)
+plugins=(git gitfast colored-man zsh-syntax-highlighting zsh-dircolors-solarized)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -77,8 +77,6 @@ alias rm='trash'
 alias cp='cp -r'
 alias scp='scp -r'
 alias mkdir='mkdir -p'
-
-eval $(dircolors -b $HOME/.dircolors)
 
 export PATH="/home/$USER/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"

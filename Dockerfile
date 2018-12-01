@@ -56,6 +56,7 @@ SHELL ["/usr/bin/zsh", "-c"]
 
 RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     git clone git://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
+    git clone --recursive git://github.com/joel-porquet/zsh-dircolors-solarized ~/.oh-my-zsh/custom/plugins/zsh-dircolors-solarized && \
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
     git clone git://github.com/altercation/vim-colors-solarized.git ~/.vim/bundle/vim-colors-solarized && \
     vim -c 'PluginInstall' -c 'qa!' && \
