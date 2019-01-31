@@ -62,7 +62,7 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     vim -c 'PluginInstall' -c 'qa!' && \
     curl -sL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | zsh && \
     source /home/$NB_USER/.zshrc && \
-    pyenv install 3.6.6 && pyenv virtualenv 3.6.6 deep && pyenv global deep && \
+    pyenv install 3.6.8 && pyenv virtualenv 3.6.8 deep && pyenv global deep && \
 \
     pip install --upgrade pip && \
     pip install torch torchvision pytorch-ignite jupyter matplotlib numpy scipy pandas \

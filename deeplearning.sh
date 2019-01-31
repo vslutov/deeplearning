@@ -87,6 +87,7 @@ EOF
 
 WORK_FOLDER=$(readlink -f "$WORK_FOLDER")
 mkdir -p "$WORK_FOLDER"
+NAME=deeplearning_$(basename "$WORK_FOLDER")
 
 # If ports set, we shoult send it to docker
 if [ -n "${JUPYTER_PORT}" ] ; then
@@ -111,6 +112,7 @@ docker pull "$IMAGE"
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
                -P $JUPYTER_PORT $TENSORBOARD_PORT \
+               "--name=$NAME" \
                "--volume=$WORK_FOLDER:/home/user/work" "$IMAGE")
 DOCKER_CODE="$?"
 
@@ -127,10 +129,13 @@ TENSORBOARD_URL=$(docker port "$CONTAINER_ID" | grep -e "^6006" | grep -o -e "\\
 echo "Jupyter: http://$JUPYTER_URL"
 echo "Tensorboard: http://$TENSORBOARD_URL"
 echo "Password: $PASSWORD"
+echo
+echo "Stop container: 'docker kill $NAME'"
+echo
 
 if [[ $START_SHELL ]]; then
-  echo "Now shell is running"
+  echo "Now shell in container is running"
   docker exec -it $CONTAINER_ID /usr/bin/zsh
 else
-  echo "Run shell into container: 'docker exec -it $CONTAINER_ID /usr/bin/zsh'"
+  echo "Run shell into container: 'docker exec -it $NAME /usr/bin/zsh'"
 fi
