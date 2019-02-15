@@ -67,7 +67,7 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     pip install --upgrade pip && \
     pip install torch torchvision pytorch-ignite jupyter matplotlib numpy scipy pandas \
                 Pillow tqdm Keras tensorflow-gpu tensorboard tensorboardX \
-                requests scikit-image scikit-learn scikit-video
+                requests scikit-image scikit-learn scikit-video Cython
 
 COPY supervisord.conf /etc/supervisord.conf
 EXPOSE 8888/tcp 6006/tcp
