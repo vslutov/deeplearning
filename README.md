@@ -15,7 +15,10 @@ Includes:
 
 ## How to use
 
-Download file [deeplearning.sh](deeplearning.sh) and make it executable.
+Clone repository:
+```
+git clone https://github.com/vslutov/deeplearning.git
+```
 
 Run command:
 

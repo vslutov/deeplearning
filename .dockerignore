@@ -4,5 +4,5 @@
 # Except
 !Dockerfile
 !supervisord.conf
-!fix-permissions
+!requirements.txt
 !home

@@ -27,8 +27,8 @@ ENV NB_USER=$NB_USER \
     NB_GID=$NB_GID \
     DEBIAN_FRONTEND=noninteractive
 
-ADD fix-permissions /usr/local/bin/fix-permissions
 ADD home /home/$NB_USER
+ADD requirements.txt /home/$NB_USER/
 
 SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get -yq dist-upgrade && \
@@ -44,7 +44,7 @@ RUN apt-get update && apt-get -yq dist-upgrade && \
     ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1  && \
     useradd -s /usr/bin/zsh -N -u $NB_UID $NB_USER && \
     mkdir -p /home/$NB_USER/work && \
-    fix-permissions /home/$NB_USER
+    chown -R $NB_UID:$NB_GID /home/$NB_USER
 
 USER $NB_UID
 ENV USER=$NB_USER \
@@ -65,9 +65,7 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     pyenv install 3.6.8 && pyenv virtualenv 3.6.8 deep && pyenv global deep && \
 \
     pip install --upgrade pip && \
-    pip install torch torchvision pytorch-ignite jupyter matplotlib numpy scipy pandas \
-                Pillow tqdm Keras tensorflow-gpu tensorboard tensorboardX \
-                requests scikit-image scikit-learn scikit-video Cython
+    pip install -r /home/$NB_USER/requirements.txt
 
 COPY supervisord.conf /etc/supervisord.conf
 EXPOSE 8888/tcp 6006/tcp

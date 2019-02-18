@@ -20,6 +20,20 @@
 # https://github.com/nhoffman/argparse-bash
 # MIT License - Copyright (c) 2015 Noah Hoffman
 
+if [ -z "$DEEPLEARNING_UPDATED" ]; then
+    # Update deeplearning
+    SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "$SOURCE" ]; do
+         DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+         SOURCE="$( readlink "$SOURCE" )"
+         [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    done
+    GIT_RESULT=$( cd -P "$( dirname "$SOURCE" )" && git pull )
+    export DEEPLEARNING_UPDATED=yes
+    source ${SOURCE}
+    exit
+fi
+
 ARGPARSE_DESCRIPTION="Start deep learning laboratory"
 
 argparse(){
@@ -106,8 +120,17 @@ if [ -z "${PASSWORD}" ] ; then
 fi
 
 # Update image
-IMAGE=vslutov/deeplearning:latest
-docker pull "$IMAGE"
+get_script_dir () {
+     SOURCE="${BASH_SOURCE[0]}"
+     while [ -h "$SOURCE" ]; do
+          DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+          SOURCE="$( readlink "$SOURCE" )"
+          [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+     done
+     echo $( cd -P "$( dirname "$SOURCE" )" && pwd )
+}
+IMAGE=vslutov/deeplearning:local
+docker build -t "$IMAGE" --build-arg NB_UID="$(id -u)" --build-arg NB_GID="$(id -g)" "$(get_script_dir)"
 
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
