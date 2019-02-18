@@ -133,7 +133,7 @@ IMAGE=vslutov/deeplearning:local
 docker build -t "$IMAGE" --build-arg NB_UID="$(id -u)" --build-arg NB_GID="$(id -g)" "$(get_script_dir)"
 
 # Run docker
-CONTAINER_ID=$(docker run --runtime=nvidia -d --rm -e "PASSWORD=$PASSWORD" \
+CONTAINER_ID=$(docker run --runtime=nvidia --shm-size 8G -d --rm -e "PASSWORD=$PASSWORD" \
                -P $JUPYTER_PORT $TENSORBOARD_PORT \
                "--name=$NAME" \
                "--volume=$WORK_FOLDER:/home/user/work" "$IMAGE")
