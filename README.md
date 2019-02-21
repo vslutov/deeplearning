@@ -1,12 +1,9 @@
 # Deep learning laboratory
 
-[![Docker Automated build](https://img.shields.io/docker/automated/vslutov/deeplearning.svg)](https://hub.docker.com/r/vslutov/deeplearning/)
-[![Docker Build Status](https://img.shields.io/docker/build/vslutov/deeplearning.svg)](https://hub.docker.com/r/vslutov/deeplearning/)
-
 Includes:
 
 - GPU support
-- Python 3.6
+- Python 3.7
 - Jupyter + Tensorboard
 - Pytorch + Ignite + TensorboardX
 - Tensorflow + Keras
@@ -24,7 +21,7 @@ Run command:
 
 ```
 usage: deeplearning.sh [-h] [-j JUPYTER_PORT] [-t TENSORBOARD_PORT]
-                       [-p PASSWORD] [-s]
+                       [-p PASSWORD]
                        work_folder
 
 Start deep learning laboratory
@@ -40,10 +37,13 @@ optional arguments:
                         The jupyter listen port [default: some free port]
   -p PASSWORD, --password PASSWORD
                         The jupyter password [default: random string]
-  -s, --start-shell     Run shell into container [default: false]
 ```
 
 If you shut down jupyter server, container will shut down.
+
+### Multiple GPUs
+
+You can use environment `NVIDIA_VISIBLE_DEVICES` to specify visible devices in container.
 
 ## Requirements
 
@@ -56,11 +56,16 @@ If you shut down jupyter server, container will shut down.
 
 Script [deeplearning.sh](deeplearning.sh):
 
-1. Pull latest image from docker hub.
-1. Generate unique jupyter password.
-1. Run the docker container from this image in background.
-1. In the container `work_folder` mounts as `/home/user/work`.
+If the container have been already started, run the shell in the container and exit.
+
+1. Update the git repository (could be canceled with `Ctrl-D`).
+1. Build the docker image. The first run may take a few minutes.
+1. Generate unique jupyter password or take your `-p` option.
+1. Create `deeplearning_<name>_data` volume. The name calculated from `work_folder` argument.
+1. Run the docker container `deeplearning_<name>` from this image in background.
+1. In the container `work_folder` mounts as `/home/user/work` and `deeplearning_<name>_data` as `/home/user/data`.
 1. In the container starts supervisor, which launch a jupyter notebook and a tensorboard.
 1. If you set the jupyter listening port, then the host port forwards to the jupyter notebook, else a random port sets.
 1. The tensorboard runs with folder `data_folder/runs` as input. The listening port sets as like as the jupyter listening port.
 1. Print out the container id, jupyter and tensorboard host ports and the jupyter password.
+1. Run the shell in the container.

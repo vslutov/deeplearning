@@ -43,7 +43,7 @@ RUN apt-get update && apt-get -yq dist-upgrade && \
     locale-gen && \
     ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1  && \
     useradd -s /usr/bin/zsh -N -u $NB_UID $NB_USER && \
-    mkdir -p /home/$NB_USER/work && \
+    mkdir -p /home/$NB_USER/work /home/$NB_USER/data && \
     chown -R $NB_UID:$NB_GID /home/$NB_USER
 
 USER $NB_UID
@@ -65,10 +65,11 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     pyenv install 3.6.8 && pyenv virtualenv 3.6.8 deep && pyenv global deep && \
 \
     pip install --upgrade pip && \
-    pip install -r /home/$NB_USER/requirements.txt
+    pip install -r /home/$NB_USER/requirements.txt && \
+    /bin/rm /home/$NB_USER/requirements.txt
 
 COPY supervisord.conf /etc/supervisord.conf
 EXPOSE 8888/tcp 6006/tcp
-WORKDIR /home/$USER/work
+WORKDIR /home/$NB_USER/work
 
 CMD supervisord -c /etc/supervisord.conf

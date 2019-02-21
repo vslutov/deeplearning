@@ -20,21 +20,14 @@
 # https://github.com/nhoffman/argparse-bash
 # MIT License - Copyright (c) 2015 Noah Hoffman
 
+# Update git repository
 if [ -z "$DEEPLEARNING_UPDATED" ]; then
-    # Update deeplearning
-    SOURCE="${BASH_SOURCE[0]}"
-    while [ -h "$SOURCE" ]; do
-         DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-         SOURCE="$( readlink "$SOURCE" )"
-         [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-    done
-    GIT_RESULT=$( cd -P "$( dirname "$SOURCE" )" && git pull )
+    SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+    ( cd -P "$( dirname "$SOURCE" )" && git pull )
     export DEEPLEARNING_UPDATED=yes
     source ${SOURCE}
     exit
 fi
-
-ARGPARSE_DESCRIPTION="Start deep learning laboratory"
 
 argparse(){
     argparser=$(mktemp 2>/dev/null || mktemp -t argparser)
@@ -52,7 +45,7 @@ class MyArgumentParser(argparse.ArgumentParser):
         sys.exit(1)
 
 parser = MyArgumentParser(prog=os.path.basename("$0"),
-            description="""$ARGPARSE_DESCRIPTION""")
+            description="""Start deep learning laboratory""")
 EOF
 
     # stdin to this function should contain the parser definition
@@ -95,20 +88,31 @@ parser.add_argument('-t', '--tensorboard-port', default=None, type=int,
                     help='The jupyter listen port [default: some free port]')
 parser.add_argument('-p', '--password', default=None, type=str,
                     help='The jupyter password [default: random string]')
-parser.add_argument('-s', '--start-shell', default=False, action='store_true',
-                    help='Run shell into container [default: false]')
 EOF
 
 WORK_FOLDER=$(readlink -f "$WORK_FOLDER")
 mkdir -p "$WORK_FOLDER"
-NAME=deeplearning_$(basename "$WORK_FOLDER")
+
+USERNAME=$(id -un)
+WORK_BASENAME=$(basename "$WORK_FOLDER")
+WORK_HASH=$(echo "$WORK_FOLDER" | md5sum - | head -c 6)
+CONTAINER_NAME="${USERNAME}_deeplearning_${WORK_BASENAME}_${WORK_HASH}"
+VOLUME_NAME="${CONTAINER_NAME}_data"
+
+start_shell () {
+  echo "Now it starts a shell into the container"
+  docker exec -it $CONTAINER_NAME /usr/bin/zsh
+}
+
+if docker inspect "$CONTAINER_NAME" >/dev/null ; then
+  start_shell
+  exit
+fi
 
 # If ports set, we shoult send it to docker
 if [ -n "${JUPYTER_PORT}" ] ; then
   JUPYTER_PORT="-p $JUPYTER_PORT:8888"
 fi
-
-[ -n "${JUPYTER_PORT}" ]
 
 if [ -n "${TENSORBOARD_PORT}" ] ; then
   TENSORBOARD_PORT="-p $TENSORBOARD_PORT:6006"
@@ -119,28 +123,33 @@ if [ -z "${PASSWORD}" ] ; then
   PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
 fi
 
-if [ -z "${NVIDIA_VISIBLE_DEVICES}" ] ; then
-  NVIDIA_VISIBLE_DEVICES=0
+if [ -z "${NB_USER}" ] ; then
+  # Generate password for jupyter
+  NB_USER=user
 fi
 
 # Update image
 get_script_dir () {
-     SOURCE="${BASH_SOURCE[0]}"
-     while [ -h "$SOURCE" ]; do
-          DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-          SOURCE="$( readlink "$SOURCE" )"
-          [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-     done
-     echo $( cd -P "$( dirname "$SOURCE" )" && pwd )
+    SOURCE=$(readlink -f "${BASH_SOURCE[0]}")
+    echo $( cd -P "$( dirname "$SOURCE" )" && pwd )
 }
-IMAGE=vslutov/deeplearning:local
-docker build -t "$IMAGE" --build-arg NB_UID="$(id -u)" --build-arg NB_GID="$(id -g)" "$(get_script_dir)"
+IMAGE="${USERNAME}/deeplearning:local"
+
+echo -n "Build docker image..."
+docker build -t "$IMAGE" --build-arg "NB_UID=$(id -u)" --build-arg "NB_GID=$(id -g)" --build-arg "NB_USER=${NB_USER}" "$(get_script_dir)" >/dev/null
+echo "Done"
+
+# Create volume
+docker volume create "${VOLUME_NAME}" >/dev/null
 
 # Run docker
 CONTAINER_ID=$(docker run --runtime=nvidia --shm-size 8G -e "NVIDIA_VISIBLE_DEVICES=$NVIDIA_VISIBLE_DEVICES" -d --rm -e "PASSWORD=$PASSWORD" \
                -P $JUPYTER_PORT $TENSORBOARD_PORT \
-               "--name=$NAME" \
-               "--volume=$WORK_FOLDER:/home/user/work" "$IMAGE")
+               "--name=$CONTAINER_NAME" \
+               "--hostname=$WORK_BASENAME" \
+               "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
+               "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
+               "$IMAGE")
 DOCKER_CODE="$?"
 
 if [ "$DOCKER_CODE" -ne "0" ]; then
@@ -157,12 +166,7 @@ echo "Jupyter: http://$JUPYTER_URL"
 echo "Tensorboard: http://$TENSORBOARD_URL"
 echo "Password: $PASSWORD"
 echo
-echo "Stop container: 'docker kill $NAME'"
+echo "Stop the container: 'docker kill $CONTAINER_NAME'"
 echo
 
-if [[ $START_SHELL ]]; then
-  echo "Now shell in container is running"
-  docker exec -it $CONTAINER_ID /usr/bin/zsh
-else
-  echo "Run shell into container: 'docker exec -it $NAME /usr/bin/zsh'"
-fi
+start_shell
