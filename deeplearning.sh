@@ -104,7 +104,7 @@ start_shell () {
   docker exec -it $CONTAINER_NAME /usr/bin/zsh
 }
 
-if docker inspect "$CONTAINER_NAME" >/dev/null ; then
+if docker inspect "$CONTAINER_NAME" >/dev/null 2>&1 ; then
   start_shell
   exit
 fi
