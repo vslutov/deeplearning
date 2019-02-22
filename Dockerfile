@@ -32,12 +32,15 @@ ADD requirements.txt /home/$NB_USER/
 
 SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get -yq dist-upgrade && \
-    apt-get install -yq curl git python3-dev python3-pip \
+    apt-get install -yq git python3-dev python3-pip \
                         build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
                         libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev \
                         libxmlsec1-dev libffi-dev \
                         supervisor htop vim tmux zsh mc trash-cli \
-                        locales sudo wget bzip2 ca-certificates fonts-liberation && \
+                        locales sudo wget bzip2 ca-certificates fonts-liberation \
+                        mercurial && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    apt-get install -yq git-lfs && \
     apt-get clean && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen && \
@@ -66,7 +69,9 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
 \
     pip install --upgrade pip && \
     pip install -r /home/$NB_USER/requirements.txt && \
-    /bin/rm /home/$NB_USER/requirements.txt
+    git clone https://github.com/NVIDIA/apex.git ~/apex && \
+    cd ~/apex && python setup.py install --cuda_ext --cpp_ext && cd ~ && \
+    /bin/rm -rf /home/$NB_USER/requirements.txt /home/apex
 
 COPY supervisord.conf /etc/supervisord.conf
 EXPOSE 8888/tcp 6006/tcp

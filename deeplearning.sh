@@ -143,13 +143,18 @@ echo "Done"
 docker volume create "${VOLUME_NAME}" >/dev/null
 
 # Run docker
-CONTAINER_ID=$(docker run --runtime=nvidia --shm-size 8G -e "NVIDIA_VISIBLE_DEVICES=$NVIDIA_VISIBLE_DEVICES" -d --rm -e "PASSWORD=$PASSWORD" \
-               -P $JUPYTER_PORT $TENSORBOARD_PORT \
-               "--name=$CONTAINER_NAME" \
-               "--hostname=$WORK_BASENAME" \
-               "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
-               "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
-               "$IMAGE")
+docker run \
+       --runtime=nvidia \
+       --shm-size 8G \
+       -d \
+       --rm \
+       -e "PASSWORD=$PASSWORD" \
+       -P $JUPYTER_PORT $TENSORBOARD_PORT \
+       "--name=$CONTAINER_NAME" \
+       "--hostname=$WORK_BASENAME" \
+       "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
+       "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
+       "$IMAGE"
 DOCKER_CODE="$?"
 
 if [ "$DOCKER_CODE" -ne "0" ]; then
@@ -158,8 +163,8 @@ if [ "$DOCKER_CODE" -ne "0" ]; then
 fi
 
 # Get service ports
-JUPYTER_URL=$(docker port "$CONTAINER_ID" | grep -e "^8888" | grep -o -e "\\S\\+$")
-TENSORBOARD_URL=$(docker port "$CONTAINER_ID" | grep -e "^6006" | grep -o -e "\\S\\+$")
+JUPYTER_URL=$(docker port "$CONTAINER_NAME" | grep -e "^8888" | grep -o -e "\\S\\+$")
+TENSORBOARD_URL=$(docker port "$CONTAINER_NAME" | grep -e "^6006" | grep -o -e "\\S\\+$")
 
 # Show log
 echo "Jupyter: http://$JUPYTER_URL"
