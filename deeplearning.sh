@@ -136,7 +136,13 @@ get_script_dir () {
 IMAGE="${USERNAME}/deeplearning:local"
 
 echo -n "Build docker image..."
-docker build -t "$IMAGE" --build-arg "NB_UID=$(id -u)" --build-arg "NB_GID=$(id -g)" --build-arg "NB_USER=${NB_USER}" "$(get_script_dir)" >/dev/null
+docker build \
+       -t "$IMAGE" \
+       --build-arg "NB_UID=$(id -u)" \
+       --build-arg "NB_GID=$(id -g)" \
+       --build-arg "NB_USER=${NB_USER}" \
+       "$(get_script_dir)" \
+       >/dev/null
 echo "Done"
 
 # Create volume
@@ -154,7 +160,8 @@ docker run \
        "--hostname=$WORK_BASENAME" \
        "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
        "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
-       "$IMAGE"
+       "$IMAGE" \
+       >/dev/null
 DOCKER_CODE="$?"
 
 if [ "$DOCKER_CODE" -ne "0" ]; then

@@ -69,9 +69,9 @@ RUN git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
 \
     pip install --upgrade pip && \
     pip install -r /home/$NB_USER/requirements.txt && \
-    git clone https://github.com/NVIDIA/apex.git ~/apex && \
-    cd ~/apex && python setup.py install --cuda_ext --cpp_ext && cd ~ && \
-    /bin/rm -rf /home/$NB_USER/requirements.txt /home/apex
+    git clone https://github.com/NVIDIA/apex.git /home/$NB_USER/apex && \
+    cd /home/$NB_USER/apex && python setup.py install --cuda_ext --cpp_ext && cd /home/$NB_USER/ && \
+    /bin/rm -rf /home/$NB_USER/requirements.txt /home/$NB_USER/apex
 
 COPY supervisord.conf /etc/supervisord.conf
 EXPOSE 8888/tcp 6006/tcp
