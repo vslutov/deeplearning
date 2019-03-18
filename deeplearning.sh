@@ -93,6 +93,9 @@ EOF
 WORK_FOLDER=$(readlink -f "$WORK_FOLDER")
 mkdir -p "$WORK_FOLDER"
 
+touch "${HOME}/zsh_history"
+ZSH_HISTORY=$(readlink -f "${HOME}/.zsh_history")
+
 USERNAME=$(id -un)
 WORK_BASENAME=$(basename "$WORK_FOLDER")
 WORK_HASH=$(echo "$WORK_FOLDER" | md5sum - | head -c 6)
@@ -135,8 +138,11 @@ get_script_dir () {
 }
 IMAGE="${USERNAME}/deeplearning:local"
 
+docker pull vslutov/deeplearning
+
 echo -n "Build docker image..."
 docker build \
+       -f "$(get_script_dir)/Dockerfile.local" \
        -t "$IMAGE" \
        --build-arg "NB_UID=$(id -u)" \
        --build-arg "NB_GID=$(id -g)" \
@@ -160,6 +166,7 @@ docker run \
        "--hostname=$WORK_BASENAME" \
        "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
        "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
+       "--volume=$ZSH_HISTORY:/home/${NB_USER}/.zsh_history" \
        "$IMAGE" \
        >/dev/null
 DOCKER_CODE="$?"

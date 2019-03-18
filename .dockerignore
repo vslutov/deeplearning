@@ -3,6 +3,7 @@
 
 # Except
 !Dockerfile
+!Dockerfile.local
 !supervisord.conf
 !requirements.txt
 !home

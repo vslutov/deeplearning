@@ -45,7 +45,8 @@ RUN apt-get update && apt-get -yq dist-upgrade && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen && \
     ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1  && \
-    useradd -s /usr/bin/zsh -N -u $NB_UID $NB_USER && \
+    groupadd -g $NB_GID $NB_USER && \
+    useradd -s /usr/bin/zsh -N -u $NB_UID -g $NB_GID $NB_USER && \
     mkdir -p /home/$NB_USER/work /home/$NB_USER/data && \
     chown -R $NB_UID:$NB_GID /home/$NB_USER
 
