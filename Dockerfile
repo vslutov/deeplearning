@@ -20,7 +20,7 @@ LABEL maintainer="Vladimir Lutov <vs@lutov.net>"
 
 ARG NB_USER="user"
 ARG NB_UID="1000"
-ARG NB_GID="100"
+ARG NB_GID="1000"
 
 ENV NB_USER=$NB_USER \
     NB_UID=$NB_UID \
