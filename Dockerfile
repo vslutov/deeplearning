@@ -18,14 +18,10 @@ FROM nvidia/cuda:9.0-cudnn7-devel
 
 LABEL maintainer="Vladimir Lutov <vs@lutov.net>"
 
-ARG NB_USER="user"
-ARG NB_UID="1000"
-ARG NB_GID="1000"
-
-ENV NB_USER=$NB_USER \
-    NB_UID=$NB_UID \
-    NB_GID=$NB_GID \
-    DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    NB_USER="user" \
+    PRE_UID="1000" \
+    PRE_GID="1000"
 
 ADD home /home/$NB_USER
 ADD requirements.txt /home/$NB_USER/
@@ -45,12 +41,12 @@ RUN apt-get update && apt-get -yq dist-upgrade && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen && \
     ln -s /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs/libcuda.so /usr/lib/libcuda.so.1  && \
-    groupadd -g $NB_GID $NB_USER && \
-    useradd -s /usr/bin/zsh -N -u $NB_UID -g $NB_GID $NB_USER && \
+    groupadd -g $PRE_GID $NB_USER && \
+    useradd -s /usr/bin/zsh -N -u $PRE_UID -g $PRE_GID $NB_USER && \
     mkdir -p /home/$NB_USER/work /home/$NB_USER/data && \
-    chown -R $NB_UID:$NB_GID /home/$NB_USER
+    chown -R $PRE_UID:$PRE_GID /home/$NB_USER
 
-USER $NB_UID
+USER $PRE_UID
 ENV USER=$NB_USER \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \

@@ -146,7 +146,6 @@ docker build \
        -t "$IMAGE" \
        --build-arg "NB_UID=$(id -u)" \
        --build-arg "NB_GID=$(id -g)" \
-       --build-arg "NB_USER=${NB_USER}" \
        "$(get_script_dir)" \
        >/dev/null
 echo "Done"
