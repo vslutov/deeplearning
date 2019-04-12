@@ -156,6 +156,7 @@ docker volume create "${VOLUME_NAME}" >/dev/null
 # Run docker
 docker run \
        --runtime=nvidia \
+       --log-driver=none \
        --shm-size 8G \
        -d \
        --rm \
