@@ -164,6 +164,8 @@ docker run \
        -P $JUPYTER_PORT $TENSORBOARD_PORT \
        "--name=$CONTAINER_NAME" \
        "--hostname=$WORK_BASENAME" \
+       "--volume=/var/run/docker.sock:/run/docker.sock" \
+       "--volume=$(which docker):/bin/docker" \
        "--volume=$WORK_FOLDER:/home/${NB_USER}/work" \
        "--volume=$VOLUME_NAME:/home/${NB_USER}/data" \
        "--volume=$ZSH_HISTORY:/home/${NB_USER}/.zsh_history" \

@@ -22,8 +22,6 @@ ARG NB_GID="1000"
 ENV NB_UID=$NB_UID \
     NB_GID=$NB_GID
 
-RUN echo $NB_USER $NB_UID $NB_GID
-
 USER root
 
 RUN groupmod -g $NB_GID "$NB_USER" && \
