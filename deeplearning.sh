@@ -84,8 +84,6 @@ argparse "$@" <<EOF || exit 1
 parser.add_argument('work_folder')
 parser.add_argument('-j', '--jupyter-port', default=None, type=int,
                     help='The jupyter listen port [default: some free port]')
-parser.add_argument('-t', '--tensorboard-port', default=None, type=int,
-                    help='The jupyter listen port [default: some free port]')
 parser.add_argument('-p', '--password', default=None, type=str,
                     help='The jupyter password [default: random string]')
 EOF
@@ -115,10 +113,6 @@ fi
 # If ports set, we shoult send it to docker
 if [ -n "${JUPYTER_PORT}" ] ; then
   JUPYTER_PORT="-p $JUPYTER_PORT:8888"
-fi
-
-if [ -n "${TENSORBOARD_PORT}" ] ; then
-  TENSORBOARD_PORT="-p $TENSORBOARD_PORT:6006"
 fi
 
 if [ -z "${PASSWORD}" ] ; then
@@ -161,7 +155,7 @@ docker run \
        -d \
        --rm \
        -e "PASSWORD=$PASSWORD" \
-       -P $JUPYTER_PORT $TENSORBOARD_PORT \
+       -P $JUPYTER_PORT \
        "--name=$CONTAINER_NAME" \
        "--hostname=$WORK_BASENAME" \
        "--volume=/var/run/docker.sock:/run/docker.sock" \
@@ -180,11 +174,9 @@ fi
 
 # Get service ports
 JUPYTER_URL=$(docker port "$CONTAINER_NAME" | grep -e "^8888" | grep -o -e "\\S\\+$")
-TENSORBOARD_URL=$(docker port "$CONTAINER_NAME" | grep -e "^6006" | grep -o -e "\\S\\+$")
 
 # Show log
 echo "Jupyter: http://$JUPYTER_URL"
-echo "Tensorboard: http://$TENSORBOARD_URL"
 echo "Password: $PASSWORD"
 echo
 echo "Stop the container: 'docker kill $CONTAINER_NAME'"
