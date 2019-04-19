@@ -41,6 +41,9 @@ optional arguments:
 
 If you shut down jupyter server, container will shut down.
 
+Tesnorboard is disabled by default, becouse it's too hungry for ram.
+You can enable tensorboard by command `supervisorctl start tensorboard`.
+
 ### Multiple GPUs
 
 You can use environment `NVIDIA_VISIBLE_DEVICES` to specify visible devices in container.

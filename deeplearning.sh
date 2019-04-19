@@ -84,6 +84,8 @@ argparse "$@" <<EOF || exit 1
 parser.add_argument('work_folder')
 parser.add_argument('-j', '--jupyter-port', default=None, type=int,
                     help='The jupyter listen port [default: some free port]')
+parser.add_argument('-t', '--tensorboard-port', default=None, type=int,
+                    help='The jupyter listen port [default: some free port]')
 parser.add_argument('-p', '--password', default=None, type=str,
                     help='The jupyter password [default: random string]')
 EOF
@@ -115,6 +117,10 @@ if [ -n "${JUPYTER_PORT}" ] ; then
   JUPYTER_PORT="-p $JUPYTER_PORT:8888"
 fi
 
+if [ -n "${TENSORBOARD_PORT}" ] ; then
+  TENSORBOARD_PORT="-p $TENSORBOARD_PORT:6006"
+fi
+
 if [ -z "${PASSWORD}" ] ; then
   # Generate password for jupyter
   PASSWORD=$(date +%s | sha256sum | base64 | head -c 32)
@@ -132,7 +138,7 @@ get_script_dir () {
 }
 IMAGE="${USERNAME}/deeplearning:local"
 
-docker pull vslutov/deeplearning
+docker pull vslutov/deeplearning:latest
 
 echo -n "Build docker image..."
 docker build \
@@ -155,7 +161,7 @@ docker run \
        -d \
        --rm \
        -e "PASSWORD=$PASSWORD" \
-       -P $JUPYTER_PORT \
+       -P $JUPYTER_PORT $TENSORBOARD_PORT \
        "--name=$CONTAINER_NAME" \
        "--hostname=$WORK_BASENAME" \
        "--volume=/var/run/docker.sock:/run/docker.sock" \
@@ -174,9 +180,11 @@ fi
 
 # Get service ports
 JUPYTER_URL=$(docker port "$CONTAINER_NAME" | grep -e "^8888" | grep -o -e "\\S\\+$")
+TENSORBOARD_URL=$(docker port "$CONTAINER_NAME" | grep -e "^6006" | grep -o -e "\\S\\+$")
 
 # Show log
-echo "Jupyter: http://$JUPYTER_URL"
+echo "Jupyter url: http://$JUPYTER_URL"
+echo "Tensorboard is disabled, run 'supervisorctl start tensorboard' to enable. Url: http://$TENSORBOARD_URL"
 echo "Password: $PASSWORD"
 echo
 echo "Stop the container: 'docker kill $CONTAINER_NAME'"
