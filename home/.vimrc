@@ -7,8 +7,10 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
+Plugin 'editorconfig/editorconfig-vim'
 Plugin 'mhinz/vim-signify'
 Plugin 'tpope/vim-fugitive'
+Plugin 'ludovicchabant/vim-lawrencium'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -16,6 +18,7 @@ Plugin 'bling/vim-bufferline'
 Plugin 'moll/vim-bbye'
 Plugin 'scrooloose/syntastic'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'tpope/vim-markdown'
 Plugin 'sjl/gundo.vim'
 
 call vundle#end()     " required

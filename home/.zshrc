@@ -1,6 +1,8 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
+ZSH_DISABLE_COMPFIX=true
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -15,7 +17,7 @@ ZSH_THEME="fishy"
 DISABLE_UPDATE_PROMPT=true
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+export UPDATE_ZSH_DAYS=1
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -46,9 +48,10 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git gitfast zsh-syntax-highlighting zsh-dircolors-solarized)
+plugins=(ssh-agent git gitfast git-flow zsh-syntax-highlighting zsh-dircolors-solarized docker docker-compose gpg-agent pyenv nvm rust cargo heroku dnf autoenv)
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
+
 
 # User configuration
 
@@ -56,6 +59,8 @@ source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
@@ -79,8 +84,7 @@ alias cp='cp -r'
 alias scp='scp -r'
 alias mkdir='mkdir -p'
 
-export PATH="/home/$USER/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 
 export MC_SKIN=~/.config/mc/lib/mc-solarized/solarized.ini
+export GPG_TTY=$(tty)
+export GPGKEY=6957E9B1667CB1C8
